@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<RevitAddIns>
+	<AddIn Type="Command">
+		<Assembly>"C:\Doc\RevitApi\RevitAPITraining_WallsVolume.dll"</Assembly>
+		<AddInId>04EB11B6-9E6C-48F7-9BC4-F061C15413CC</AddInId>
+		<FullClassName>RevitAPITraining_WallsVolume.Main</FullClassName>
+		<VendorId>bdvbuild</VendorId>
+		<Text>3.1 Объем выбранных стен</Text>
+	</AddIn>
+</RevitAddIns>
