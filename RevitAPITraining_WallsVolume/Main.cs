@@ -20,20 +20,34 @@ namespace RevitAPITraining_WallsVolume
             UIDocument uidoc = uiapp.ActiveUIDocument;
             Document doc = uidoc.Document;
 
-            IList<Reference> selectedElementRefList = uidoc.Selection.PickObjects(ObjectType.Element, new WallFilter(), "Выберите стены");
-
-            double sumVolume = 0;
-
-            foreach (var selectedElement in selectedElementRefList)
+            List<ElementId> elementsIds = new List<ElementId>();
+            try
             {
-                Wall oWall = doc.GetElement(selectedElement) as Wall;
-                Parameter wallVolume = oWall.get_Parameter(BuiltInParameter.HOST_VOLUME_COMPUTED);
-                double volume = UnitUtils.ConvertFromInternalUnits(wallVolume.AsDouble(), UnitTypeId.CubicMeters);
-                sumVolume += volume;
+                IList<Reference> selectedElementRefList = uidoc.Selection.PickObjects(ObjectType.Edge, "Выберите стены");
+                double sumVolume = 0;
+                List<Wall> walls = new List<Wall>();
+
+                foreach (var selectedElement in selectedElementRefList)
+                {
+                    Wall oWall = doc.GetElement(selectedElement) as Wall;
+                    if (oWall != null)
+                    {
+                        if (!elementsIds.Contains(oWall.Id))
+                        {
+                            elementsIds.Add(oWall.Id);
+                            walls.Add(oWall);
+                            Parameter wallVolume = oWall.get_Parameter(BuiltInParameter.HOST_VOLUME_COMPUTED);
+                            double volume = UnitUtils.ConvertFromInternalUnits(wallVolume.AsDouble(), UnitTypeId.CubicMeters);
+                            sumVolume += volume;
+                        }
+                    }
+                }
+                TaskDialog.Show("Selection", $"Объем выбранных стен: {sumVolume}м^3. Количество: {walls.Count}");
             }
-
-            TaskDialog.Show("Selection", $"Объем выбранных стен: {sumVolume}м^3");
-
+            catch
+            {
+                TaskDialog.Show("Selection", "Работа прервана");
+            }
             return Result.Succeeded;
         }
     }
